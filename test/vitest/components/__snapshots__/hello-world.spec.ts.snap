@@ -1,0 +1,3 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`TheHeader Component > Mounts properly > "FOOBAR" 1`] = `"FOOBAR"`;
