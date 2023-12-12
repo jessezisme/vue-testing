@@ -7,15 +7,18 @@ import { useUserStore } from '../../../src/stores/user';
 import { nextTick } from 'process';
 
 describe('TheHeader Component', () => {
-  let wrapper: any;
-  let userStore: any;
-
-  beforeEach(() => {
-    wrapper = mount(TheHeader, {
+  const getWrapper = () => {
+    return mount(TheHeader, {
       global: {
         plugins: [createTestingPinia({ createSpy: vi.fn })],
       },
     });
+  };
+  let wrapper = getWrapper();
+  let userStore = useUserStore();
+
+  beforeEach(() => {
+    wrapper = getWrapper();
     userStore = useUserStore();
   });
 
@@ -27,15 +30,19 @@ describe('TheHeader Component', () => {
     expect(wrapper.vm).toBeTruthy();
   });
 
-  describe('Logged out status', () => {
-    it('Runs login on login click', async () => {
-      await wrapper.find('[data-test="login"]').trigger('click');
-      expect(userStore.login).toHaveBeenCalledTimes(1);
-    });
-
-    it('Shows logout button when logged in', async () => {
+  describe('If logged in', () => {
+    beforeEach(async () => {
+      // @ts-ignore
       userStore.isLoggedIn = true;
       await wrapper.vm.$nextTick();
+    });
+
+    it('Runs logout on click', async () => {
+      await wrapper.find('[data-test="logout"]').trigger('click');
+      expect(userStore.logout).toHaveBeenCalledTimes(1);
+    });
+
+    it('Shows correct login and logout buttons', async () => {
       expect(wrapper.findAll('[data-test="logout"]').length).toBeGreaterThan(0);
       expect(wrapper.findAll('[data-test="login"]').length).toBe(0);
     });
